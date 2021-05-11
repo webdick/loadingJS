@@ -10,7 +10,7 @@
 ```html
 <script src="loading.js"></script>
 ```
-在页面中提供一个动画元素的容器
+在页面中提供一个容器给加载动画元素
 ```html
 <body>
   <div id="load"></div>
