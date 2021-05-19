@@ -1,6 +1,6 @@
 /* 
 	加载动画插件
-	version: 1.1.0
+	version: 1.1.1
 	author: 顾晨
 	github: https://github.com/webdick/loadingJS
 	
@@ -10,7 +10,7 @@
 	hide:'#app',//隐藏元素选择器 在加载完成前将该选择器下的元素全部进行隐藏 加载完成后再进行显示 起到防止未加载完却可以滚动的问题 可留空
 	bindClass:'.load',//如果只想预加载有指定类名的图片就写这 不加则默认是自动预加载网页中的所有img
 	wait:10000,//加载超时时间	 默认10000毫秒
-	animateTime:'1.5s',//动画淡入淡出时间 默认1.5s 建议不要超过delTime的时间 否则动画未加载完元素就会被彻底删除
+	animateTime:1500,//动画淡入淡出时间 默认1500毫秒 建议不要超过delTime的时间 否则动画未加载完元素就会被彻底删除
 	delTime:3000,//完全删除动画元素时间(包括容器) 默认3000毫秒
 	callback:()=>{
 		// 加载完成回调
@@ -20,6 +20,7 @@
 */
 ;(function(){
 	class Load{
+		// 构造函数
 		constructor(conf) {
 			// 获取元素
 			this.$el = conf.el.nodeType === 1?conf.el:document.querySelector(conf.el);
@@ -30,7 +31,7 @@
 			// 回调事件
 			this.$callback = conf.callback;
 			// 动画时长
-			this.$animateTime = conf.animateTime?conf.animateTime:1500;
+			this.$animateTime = conf.animateTime?conf.animateTime/1000+'s':'1.5s';
 			// 彻底删除时间
 			this.$delTime = conf.delTime?conf.delTime:3000;
 			
@@ -51,7 +52,7 @@
 		// 初始化加载
 		initData(){
 			// 读取页面所有图片
-			var tags = document.querySelectorAll(this.$bindClass),
+			let tags = document.querySelectorAll(this.$bindClass),
 			loadingText = document.querySelector('#loading_tesxt > span'),
 			tagsLen = tags.length,
 			progress = 0,
@@ -66,7 +67,7 @@
 			}
 			// 遍历图片
 			tags.forEach((v,i)=>{
-				var img = new Image();
+				let img = new Image();
 				img.src = v.src;
 				// 每当图片载入成功
 				img.onload = ()=>{
@@ -82,10 +83,9 @@
 			});
 			// 超出等待时间
 			setTimeout(()=>{
-				
 				// 如果等待时间后仍处于加载状态则显示重载
 				if(document.querySelector("#loading_container")){
-					document.querySelector("#loading_slow").classList.add("fadeIn");
+					document.querySelector("#loading_slow").classList.add("loadFadeIn");
 					console.log(document.querySelector("#loading_slow"))
 				}
 			}, this.$wait);
@@ -93,7 +93,7 @@
 		// 加载结束
 		loadOut(){
 			// 添加淡出动画
-			document.querySelector("#loading_container").classList.add("fadeOut");
+			document.querySelector("#loading_container").classList.add("loadFadeOut");
 			if(this.$hide){
 				this.$hide.style.display = "block";
 			}
@@ -111,9 +111,9 @@
 		// 添加HTML
 		addHtml(el){
 			// 引入css
-			var css = this.addCss();
+			let css = this.addCss();
 			// 引入动画
-			var animate = this.addAnimate();
+			let animate = this.addAnimate();
 			// 插入html
 			el.innerHTML = `
 				<div id="loading_container" style="display:'none';">
@@ -292,9 +292,9 @@
 		}
 		// 添加动画
 		addAnimate(){
-			var time = this.$animateTime;
+			let time = this.$animateTime;
 			return `
-				@-webkit-keyframes fadeOut {
+				@-webkit-keyframes loadFadeOut {
 				  from {
 				    opacity: 1;
 				  }
@@ -304,7 +304,7 @@
 				  }
 				}
 				
-				@keyframes fadeOut {
+				@keyframes loadFadeOut {
 				  from {
 				    opacity: 1;
 				  }
@@ -314,16 +314,16 @@
 				  }
 				}
 				
-				.fadeOut {
+				.loadFadeOut {
 				-webkit-animation-duration: ${time};
 				animation-duration: ${time};
 				-webkit-animation-fill-mode: both;
 				animation-fill-mode: both;
-				  -webkit-animation-name: fadeOut;
-				  animation-name: fadeOut;
+				  -webkit-animation-name: loadFadeOut;
+				  animation-name: loadFadeOut;
 				}
 				
-				@-webkit-keyframes fadeIn {
+				@-webkit-keyframes loadFadeIn {
 				  from {
 				    opacity: 0;
 				  }
@@ -333,7 +333,7 @@
 				  }
 				}
 				
-				@keyframes fadeIn {
+				@keyframes loadFadeIn {
 				  from {
 				    opacity: 0;
 				  }
@@ -343,14 +343,14 @@
 				  }
 				}
 				
-				.fadeIn {
+				.loadFadeIn {
 					display:block!important;
 					-webkit-animation-duration: ${time};
 					animation-duration: ${time};
 					-webkit-animation-fill-mode: both;
 					animation-fill-mode: both;
-				  -webkit-animation-name: fadeIn;
-				  animation-name: fadeIn;
+				  -webkit-animation-name: loadFadeIn;
+				  animation-name: loadFadeIn;
 				}
 				
 				@-webkit-keyframes throbber {
